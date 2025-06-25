@@ -1,9 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ExternalLoginController extends Controller
 {
@@ -13,20 +11,20 @@ class ExternalLoginController extends Controller
 
   if (! $token) {
    return redirect('/login')->withErrors(['Token is missing']);
-  }
+  } else {
+   try {
+    $payload = JWTAuth::setToken($token)->getPayload();
+    $user    = User::find($payload['sub']);
 
-  try {
-   $payload = JWTAuth::setToken($token)->getPayload();
-   $user    = User::find($payload['sub']);
+    if (! $user) {
+     return redirect('/login')->withErrors(['User not found']);
+    }
 
-   if (! $user) {
-    return redirect('/login')->withErrors(['User not found']);
+    auth()->login($user);
+    return redirect('/dashboard');
+   } catch (\Exception $e) {
+    return redirect('/login')->withErrors(['Invalid or expired token']);
    }
-
-   auth()->login($user);
-   return redirect('/dashboard');
-  } catch (\Exception $e) {
-   return redirect('/login')->withErrors(['Invalid or expired token']);
   }
  }
 }
