@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ExternalLoginController extends Controller
 {
@@ -15,7 +17,6 @@ class ExternalLoginController extends Controller
    try {
     $payload = JWTAuth::setToken($token)->getPayload();
     $user    = User::find($payload['sub']);
-
     if (! $user) {
      return redirect('/login')->withErrors(['User not found']);
     }

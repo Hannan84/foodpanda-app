@@ -12,4 +12,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/auth/external-login', [ExternalLoginController::class, 'handle']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
 Route::get('/logout', [LoginController::class, 'logout']);
-Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
